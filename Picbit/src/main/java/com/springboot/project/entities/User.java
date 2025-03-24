@@ -1,5 +1,8 @@
 package com.springboot.project.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.annotation.Generated;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -27,5 +30,8 @@ public class User {
 
     private String about;
 
+	
+	@OneToMany(mappedBy="user",cascade=CascadeType.ALL)
+	private List<Post> posts = new ArrayList<>();
    
 }
