@@ -4,8 +4,10 @@ import java.sql.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.hibernate.query.Page;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.springboot.project.entities.Category;
@@ -52,27 +54,36 @@ public class PostServiceImpl implements PostService{
 	}
 
 	@Override
-	public PostDto updatePost(PostDto postDto) {
-		// TODO Auto-generated method stub
-		return null;
+	public PostDto updatePost(PostDto postDto,Integer postId) {
+		Post updatePost = this.postRepo.findById(postId).orElseThrow(()->new ResourceNotFoundException("Post","postID",postId));
+		updatePost.setTitle(postDto.getTitle());
+		updatePost.setContent(postDto.getContent());
+		updatePost.setImageName(postDto.getImageName());
+		Post updatedPost = this.postRepo.save(updatePost);
+		return this.modelMapper.map(updatedPost,PostDto.class);
 	}
 
 	@Override
 	public void deletePost(Integer postId) {
-		// TODO Auto-generated method stub
+		Post deletePost = this.postRepo.findById(postId).orElseThrow(()->new ResourceNotFoundException("Post","postID",postId));
+		this.postRepo.delete(deletePost);
 		
 	}
 
 	@Override
-	public List<PostDto> getAllPost() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<PostDto> getAllPost(Integer pageNumber, Integer pageSize) {
+		PageRequest pageable = PageRequest.of(pageNumber, pageSize);
+		List<Post> post=this.postRepo.findAll(pageable).getContent();
+		
+		return post.stream().map((eachPost)->this.modelMapper.map(eachPost,PostDto.class)).collect(Collectors.toList());
+		
 	}
 
 	@Override
 	public PostDto getSinglePost(Integer postId) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Post post=this.postRepo.findById(postId).orElseThrow(()->new ResourceNotFoundException("Post","postID",postId));
+		return this.modelMapper.map(post, PostDto.class);
 	}
 
 	@Override
@@ -87,6 +98,8 @@ public class PostServiceImpl implements PostService{
 		List<PostDto> postByUser = this.postRepo.findAllByUser(findUser).stream().map((eachPost)->this.modelMapper.map(eachPost, PostDto.class)).collect(Collectors.toList());				
 		return postByUser;
 	}
+
+	
 	
 	
 
