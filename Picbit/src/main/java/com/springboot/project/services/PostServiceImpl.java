@@ -6,8 +6,10 @@ import java.util.stream.Collectors;
 
 import org.hibernate.query.Page;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Sort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import com.springboot.project.entities.Category;
@@ -15,6 +17,7 @@ import com.springboot.project.entities.Post;
 import com.springboot.project.entities.User;
 import com.springboot.project.exceptions.ResourceNotFoundException;
 import com.springboot.project.payloads.PostDto;
+import com.springboot.project.payloads.PostResponse;
 import com.springboot.project.repositories.CategoryRepo;
 import com.springboot.project.repositories.PostRepo;
 import com.springboot.project.repositories.UserRepo;
@@ -71,13 +74,34 @@ public class PostServiceImpl implements PostService{
 	}
 
 	@Override
-	public List<PostDto> getAllPost(Integer pageNumber, Integer pageSize) {
-		PageRequest pageable = PageRequest.of(pageNumber, pageSize);
-		List<Post> post=this.postRepo.findAll(pageable).getContent();
-		
-		return post.stream().map((eachPost)->this.modelMapper.map(eachPost,PostDto.class)).collect(Collectors.toList());
-		
+	public PostResponse getAllPost(Integer pageNumber, Integer pageSize, String sortBy) {
+	    // Create Sort object for ascending order
+	    Sort sort = Sort.by(sortBy).ascending();
+
+	    // Create Pageable object with pagination and sorting
+	    PageRequest pageable = PageRequest.of(pageNumber, pageSize, sort);
+
+	    // Fetch paginated and sorted posts
+	    org.springframework.data.domain.Page<Post> postPage = this.postRepo.findAll(pageable);
+
+	    // Map Post entities to PostDto objects
+	    List<PostDto> postDtoList = postPage.getContent()
+	            .stream()
+	            .map(post -> this.modelMapper.map(post, PostDto.class))
+	            .collect(Collectors.toList());
+
+	    // Create response object
+	    PostResponse response = new PostResponse();
+	    response.setPostsList(postDtoList);
+	    response.setPageNumber(postPage.getNumber());
+	    response.setPageSize(postPage.getSize());
+	    response.setLast(postPage.isLast());
+	    response.setTotalElements(postPage.getTotalElements());
+	    response.setTotalPages(postPage.getTotalPages());
+
+	    return response;
 	}
+
 
 	@Override
 	public PostDto getSinglePost(Integer postId) {

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.project.payloads.PostDto;
+import com.springboot.project.payloads.PostResponse;
 import com.springboot.project.services.PostService;
 
 @RestController
@@ -41,8 +42,8 @@ public class PostController {
 	}
 	
 	@GetMapping("/posts")
-	public ResponseEntity<List<PostDto>> getAllPost(@RequestParam(value="pageNumber",defaultValue="0",required=false) Integer pageNumber,@RequestParam(value="pageSize",defaultValue="2",required=false) Integer pageSize){
-		return new ResponseEntity<List<PostDto>>(this.postService.getAllPost(pageNumber,pageSize),HttpStatus.OK);
+	public ResponseEntity<PostResponse> getAllPost(@RequestParam(value="pageNumber",defaultValue="0",required=false) Integer pageNumber,@RequestParam(value="pageSize",defaultValue="2",required=false) Integer pageSize,@RequestParam(value="sortBy",defaultValue="Id",required=false) String sortBy){
+		return new ResponseEntity<PostResponse>(this.postService.getAllPost(pageNumber,pageSize,sortBy),HttpStatus.OK);
 		
 	}
 	@GetMapping("/posts/{postId}")
