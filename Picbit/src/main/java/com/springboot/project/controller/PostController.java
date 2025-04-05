@@ -70,6 +70,11 @@ public class PostController {
 		return new ResponseEntity(Map.of("message","User deleted successfully"),HttpStatus.OK);
 		
 	}
+	@GetMapping("/posts/search/{keyword:[a-zA-Z]+}")
+	public ResponseEntity<?> getPostByTitle(@PathVariable String keyword){
+		return new ResponseEntity<List<PostDto>>(this.postService.getPostByTitle(keyword),HttpStatus.OK);
+	}
+	
 	
 	
 

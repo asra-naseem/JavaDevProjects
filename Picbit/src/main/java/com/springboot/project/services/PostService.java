@@ -14,5 +14,6 @@ public interface PostService  {
 	List<PostDto>getPostByCategory(Integer categoryId);
 	List<PostDto>getPostByUser(Integer userId);
 	PostDto updatePost(PostDto postDto, Integer postId);
+	List<PostDto> getPostByTitle(String keyword);
 	
 }

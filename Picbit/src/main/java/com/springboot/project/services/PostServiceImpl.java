@@ -123,6 +123,10 @@ public class PostServiceImpl implements PostService{
 		return postByUser;
 	}
 
+	public List<PostDto>getPostByTitle(String keyword){
+    return this.postRepo.findAllByTitle("%+keyword+"%).stream().map((eachPost)->this.modelMapper.map(eachPost, PostDto.class)).collect(Collectors.toList());
+		
+	}
 	
 	
 	
