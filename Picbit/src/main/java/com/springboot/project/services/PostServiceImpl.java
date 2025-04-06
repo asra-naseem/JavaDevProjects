@@ -124,7 +124,7 @@ public class PostServiceImpl implements PostService{
 	}
 
 	public List<PostDto>getPostByTitle(String keyword){
-    return this.postRepo.findAllByTitle("%+keyword+"%).stream().map((eachPost)->this.modelMapper.map(eachPost, PostDto.class)).collect(Collectors.toList());
+    return this.postRepo.findAllByTitle("%+keyword+%").stream().map((eachPost)->this.modelMapper.map(eachPost, PostDto.class)).collect(Collectors.toList());
 		
 	}
 	
